@@ -1,0 +1,734 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+
+        .container {
+            width: 80%;
+            margin: 20px auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+
+        .ad-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .ad-item {
+            border: 1px solid #ddd;
+            margin-bottom: 10px;
+            padding: 10px;
+            border-radius: 4px;
+            background-color: #f9f9f9;
+        }
+
+        .ad-title {
+            font-size: 1.2em;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .ad-meta {
+            font-size: 0.9em;
+            color: #777;
+        }
+
+        .ad-reward {
+            color: green;
+            margin-left: 10px;
+        }
+    </style>
+</head>
+<body>
+  
+</body>
+</html>
+
+{% extends 'base.html' %}
+
+{% block title %}Dashboard{% endblock %}
+
+{% block styles %}
+<style>
+    /* Dashboard Styles */
+    .dashboard-section {
+        display: flex;
+        flex-direction: column;
+        gap: 2.5rem;
+    }
+
+    .user-info {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 1.5rem;
+        background-color: var(--background-white);
+        padding: 2rem;
+        border-radius: var(--radius-lg);
+        box-shadow: var(--shadow);
+    }
+
+    .user-greeting h2 {
+        font-size: 1.8rem;
+        margin-bottom: 0.5rem;
+        color: var(--text-color);
+    }
+
+    .user-greeting p {
+        color: var(--text-light);
+    }
+
+    .balance-card {
+        background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
+        padding: 1.5rem 2rem;
+        border-radius: var(--radius-lg);
+        box-shadow: var(--shadow-md);
+        color: white;
+        min-width: 220px;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .balance-card::before {
+        content: '';
+        position: absolute;
+        top: -20px;
+        right: -20px;
+        width: 100px;
+        height: 100px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.1);
+    }
+
+    .balance-card h3 {
+        font-size: 1.1rem;
+        margin-bottom: 0.75rem;
+        font-weight: 500;
+    }
+
+    .balance-amount {
+        font-size: 2.2rem;
+        font-weight: 700;
+        display: flex;
+        align-items: center;
+    }
+
+    .balance-amount span {
+        font-size: 1.2rem;
+        margin-right: 0.5rem;
+        opacity: 0.8;
+    }
+
+    .stats-container {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1.5rem;
+        margin-top: 1rem;
+    }
+
+    .stat-card {
+        background-color: var(--background-white);
+        padding: 1.5rem;
+        border-radius: var(--radius-lg);
+        box-shadow: var(--shadow);
+        text-align: center;
+    }
+
+    .stat-card h4 {
+        color: var(--text-light);
+        font-size: 0.9rem;
+        margin-bottom: 0.5rem;
+        font-weight: 500;
+    }
+
+    .stat-card p {
+        font-size: 1.5rem;
+        font-weight: 600;
+        color: var(--text-color);
+    }
+
+    .ads-container {
+        background-color: var(--background-white);
+        padding: 2rem;
+        border-radius: var(--radius-lg);
+        box-shadow: var(--shadow);
+    }
+
+    .ads-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1.5rem;
+    }
+
+    .ads-header h2 {
+        font-size: 1.5rem;
+        color: var(--text-color);
+    }
+
+    .ads-filter {
+        display: flex;
+        gap: 1rem;
+    }
+
+    .filter-btn {
+        padding: 0.5rem 1rem;
+        background-color: var(--background-light);
+        border: 1px solid var(--border-color);
+        border-radius: var(--radius);
+        font-size: 0.9rem;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+
+    .filter-btn:hover, .filter-btn.active {
+        background-color: var(--primary-color);
+        color: white;
+        border-color: var(--primary-color);
+    }
+
+    .ads-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        gap: 1.5rem;
+    }
+
+    .ad-card {
+        background-color: var(--background-light);
+        border-radius: var(--radius-lg);
+        overflow: hidden;
+        box-shadow: var(--shadow);
+        cursor: pointer;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        position: relative;
+    }
+
+    .ad-card:hover {
+        transform: translateY(-5px);
+        box-shadow: var(--shadow-lg);
+    }
+
+    .ad-thumbnail {
+        height: 180px;
+        background-color: #e5e7eb;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        position: relative;
+    }
+
+    .play-button {
+        width: 60px;
+        height: 60px;
+        background-color: rgba(79, 70, 229, 0.9);
+        border-radius: 50%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        color: white;
+        font-size: 1.5rem;
+        transition: background-color 0.3s ease, transform 0.2s ease;
+    }
+
+    .ad-card:hover .play-button {
+        background-color: var(--primary-color);
+        transform: scale(1.1);
+    }
+
+    .ad-duration {
+        position: absolute;
+        bottom: 10px;
+        right: 10px;
+        background-color: rgba(0, 0, 0, 0.7);
+        color: white;
+        padding: 0.25rem 0.5rem;
+        border-radius: var(--radius);
+        font-size: 0.8rem;
+    }
+
+    .ad-info {
+        padding: 1.2rem;
+    }
+
+    .ad-info h3 {
+        margin-bottom: 0.75rem;
+        color: var(--text-color);
+        font-weight: 600;
+    }
+
+    .ad-meta {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        color: var(--text-light);
+        font-size: 0.9rem;
+    }
+
+    .ad-reward {
+        color: var(--secondary-color);
+        font-weight: 600;
+    }
+
+    /* Modal Styles */
+    .modal {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.8);
+        z-index: 1000;
+        justify-content: center;
+        align-items: center;
+        backdrop-filter: blur(5px);
+    }
+
+    .modal-content {
+        background-color: var(--background-white);
+        padding: 2rem;
+        border-radius: var(--radius-lg);
+        width: 90%;
+        max-width: 800px;
+        position: relative;
+        box-shadow: var(--shadow-lg);
+        text-align: center;
+    }
+
+    .close-button {
+        position: absolute;
+        top: 1rem;
+        right: 1rem;
+        width: 30px;
+        height: 30px;
+        background-color: var(--background-light);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.2rem;
+        cursor: pointer;
+        color: var(--text-color);
+        transition: all 0.2s ease;
+    }
+
+    .close-button:hover {
+        background-color: var(--error-color);
+        color: white;
+    }
+
+    .video-container {
+        margin: 1.5rem 0;
+        border-radius: var(--radius-md);
+        overflow: hidden;
+        box-shadow: var(--shadow);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background-color: #f0f0f0;
+        height: 300px;
+    }
+
+    .modal-play-button {
+        width: 80px;
+        height: 80px;
+        background-color: rgba(79, 70, 229, 0.9);
+        border-radius: 50%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        color: white;
+        font-size: 2rem;
+        cursor: pointer;
+        transition: background-color 0.3s ease, transform 0.2s ease;
+    }
+
+    .modal-play-button:hover {
+        background-color: var(--primary-color);
+        transform: scale(1.1);
+    }
+
+    .ad-progress {
+        margin-top: 1.5rem;
+    }
+
+    .progress-bar {
+        height: 10px;
+        background-color: var(--background-light);
+        border-radius: 5px;
+        overflow: hidden;
+        margin-bottom: 0.75rem;
+    }
+
+    .progress-fill {
+        height: 100%;
+        width: 0;
+        background: linear-gradient(to right, var(--primary-color), var(--secondary-color));
+        transition: width 0.3s ease;
+    }
+
+    .progress-text {
+        text-align: center;
+        color: var(--text-color);
+        font-size: 1rem;
+        font-weight: 500;
+    }
+
+    .claim-button {
+        margin-top: 1rem;
+        padding: 0.75rem 1.5rem;
+        background-color: var(--primary-color);
+        color: white;
+        border: none;
+        border-radius: var(--radius);
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        opacity: 0.5;
+        pointer-events: none;
+    }
+
+    .claim-button.active {
+        opacity: 1;
+        pointer-events: auto;
+    }
+
+    .claim-button.active:hover {
+        background-color: var(--primary-dark);
+        transform: translateY(-2px);
+    }
+
+    /* Responsive Styles */
+    @media (max-width: 768px) {
+        .user-info {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .balance-card {
+            width: 100%;
+        }
+
+        .ads-header {
+            flex-direction: column;
+            gap: 1rem;
+            align-items: flex-start;
+        }
+
+        .ads-filter {
+            width: 100%;
+            overflow-x: auto;
+            padding-bottom: 0.5rem;
+        }
+
+        .filter-btn {
+            white-space: nowrap;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .user-info, .ads-container {
+            padding: 1.5rem;
+        }
+
+        .user-greeting h2 {
+            font-size: 1.5rem;
+        }
+
+        .balance-amount {
+            font-size: 1.8rem;
+        }
+
+        .ads-header h2 {
+            font-size: 1.3rem;
+        }
+
+        .modal-content {
+            padding: 1.5rem;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<section class="dashboard-section">
+    <div class="user-info">
+        <div class="user-greeting">
+            <h2>Welcome, {{ session.get('user_name') }}</h2>
+            <p>Here's your ad watching progress</p>
+        </div>
+        <div class="balance-card">
+            <h3>Your Balance</h3>
+            <p class="balance-amount"><span>BDT</span><span id="user-balance">{{ balance }}</span></p>
+        </div>
+    </div>
+    
+    <div class="stats-container">
+        <div class="stat-card">
+            <h4>Ads Watched</h4>
+            <p>0 </p>
+        </div>
+        <div class="stat-card">
+            <h4>Total Earned</h4>
+            <p>BDT {{ balance }}</p>
+        </div>
+        <div class="stat-card">
+            <h4>Available Ads</h4>
+            <p>{{ ads|length }}</p>
+        </div>
+    </div>
+    
+    <div class="ads-container">
+        <div class="ads-header">
+            <h2>Available Advertisements</h2>
+            <div class="ads-filter">
+                <button class="filter-btn active">All Ads</button>
+                <button class="filter-btn">Short (< 30s)</button>
+                <button class="filter-btn">Medium (30-60s)</button>
+                <button class="filter-btn">Long (> 60s)</button>
+            </div>
+        </div>
+        <div class="ads-grid">
+                {% for ad in ads %}
+                    <div class="ad-card" data-ad-id="{{ ad['id'] }}" data-duration="{{ ad['duration'] }}">
+                        <div class="ad-thumbnail">
+                            <div class="play-button">▶</div>
+                            <div class="ad-duration">{{ ad['duration'] }}s</div>
+                        </div>
+                        <div class="ad-info">
+                            <h3>{{ ad['title'] }}</h3>
+                            <div class="ad-meta">
+                                <span>Duration: {{ ad['duration'] }} seconds</span>
+                                <span class="ad-reward">BDT 2</span>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+        </div>
+    </div>
+    
+    <div id="ad-player-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-button">&times;</span>
+            <h2 id="ad-title"></h2>
+            <div class="video-container">
+                <div class="modal-play-button" id="open-ad-link">▶</div>
+            </div>
+            <div class="ad-progress">
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progress-fill"></div>
+                </div>
+                <p class="progress-text" id="progress-text">Click the play button to open the ad</p>
+                <button id="claim-reward-btn" class="claim-button">Claim Reward</button>
+            </div>
+        </div>
+    </div>
+</section>
+<script async="async" data-cfasync="false" src="//selfportraitscanty.com/0086262b61670deb4d4e90230d4afd26/invoke.js"></script>
+<div id="container-0086262b61670deb4d4e90230d4afd26"></div>
+<script type="text/javascript">
+	atOptions = {
+		'key' : '044bc0a39e76c34b5cf3fda0bd6a8f06',
+		'format' : 'iframe',
+		'height' : 60,
+		'width' : 468,
+		'params' : {}
+	};
+</script>
+<script type="text/javascript" src="//selfportraitscanty.com/044bc0a39e76c34b5cf3fda0bd6a8f06/invoke.js"></script>
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+    // Get elements
+    const adCards = document.querySelectorAll(".ad-card");
+    const modal = document.getElementById("ad-player-modal");
+    const closeButton = document.querySelector(".close-button");
+    const adTitle = document.getElementById("ad-title");
+    const openAdLink = document.getElementById("open-ad-link");
+    const progressFill = document.getElementById("progress-fill");
+    const progressText = document.getElementById("progress-text");
+    const claimRewardBtn = document.getElementById("claim-reward-btn");
+    const userBalanceElement = document.getElementById("user-balance");
+    const filterButtons = document.querySelectorAll(".filter-btn");
+
+    // Ad link
+    const adLink = "https://selfportraitscanty.com/gfj7w2ez?key=dbcd81f492e9690233618fc220291ea5";
+    
+    let currentAdId = null;
+    let timerStarted = false;
+    let timerInterval = null;
+    let secondsRemaining = 20;
+    let linkOpened = false;
+
+    // Filter buttons functionality
+    filterButtons.forEach(button => {
+        button.addEventListener("click", function() {
+            // Remove active class from all buttons
+            filterButtons.forEach(btn => btn.classList.remove("active"));
+            // Add active class to clicked button
+            this.classList.add("active");
+            
+            // Here you would implement the actual filtering logic
+            console.log("Filter selected:", this.textContent);
+        });
+    });
+
+    // Open modal when ad card is clicked
+    adCards.forEach((card) => {
+        card.addEventListener("click", function () {
+            currentAdId = this.dataset.adId;
+            const adName = this.querySelector("h3").textContent;
+
+            // Reset modal state
+            adTitle.textContent = adName;
+            progressFill.style.width = "0%";
+            progressText.textContent = "Click the play button to open the ad";
+            claimRewardBtn.classList.remove("active");
+            timerStarted = false;
+            linkOpened = false;
+            secondsRemaining = 20;
+            
+            if (timerInterval) {
+                clearInterval(timerInterval);
+                timerInterval = null;
+            }
+
+            // Show modal
+            modal.style.display = "flex";
+        });
+    });
+
+    // Open ad link when play button is clicked
+    openAdLink.addEventListener("click", function() {
+        if (!linkOpened) {
+            // Open the ad link in a new tab
+            window.open(adLink, '_blank');
+            linkOpened = true;
+            
+            // Start the timer
+            startTimer();
+        }
+    });
+
+    // Start 20-second timer
+    function startTimer() {
+        if (timerStarted) return;
+        
+        timerStarted = true;
+        progressText.textContent = `Wait ${secondsRemaining} seconds to claim your reward`;
+        
+        timerInterval = setInterval(() => {
+            secondsRemaining--;
+            
+            // Update progress bar
+            const progress = ((20 - secondsRemaining) / 20) * 100;
+            progressFill.style.width = `${progress}%`;
+            
+            if (secondsRemaining > 0) {
+                progressText.textContent = `Wait ${secondsRemaining} seconds to claim your reward`;
+            } else {
+                clearInterval(timerInterval);
+                progressText.textContent = "You can now claim your reward!";
+                claimRewardBtn.classList.add("active");
+            }
+        }, 1000);
+    }
+
+    // Claim reward button click
+    claimRewardBtn.addEventListener("click", function() {
+        if (this.classList.contains("active")) {
+            // Send reward request to server
+            sendRewardRequest(currentAdId, true);
+            
+            // Update UI
+            this.classList.remove("active");
+            this.textContent = "Reward Claimed!";
+            progressText.textContent = "Congratulations! You earned BDT 2";
+        }
+    });
+
+    // Close modal
+    closeButton.addEventListener("click", () => {
+        modal.style.display = "none";
+        
+        if (timerInterval) {
+            clearInterval(timerInterval);
+            timerInterval = null;
+        }
+        
+        // If timer was started but reward wasn't claimed, record this
+        if (timerStarted && !claimRewardBtn.textContent.includes("Claimed")) {
+            sendRewardRequest(currentAdId, false);
+        }
+    });
+
+    // Click outside modal to close
+    window.addEventListener("click", (event) => {
+        if (event.target === modal) {
+            modal.style.display = "none";
+            
+            if (timerInterval) {
+                clearInterval(timerInterval);
+                timerInterval = null;
+            }
+            
+            // If timer was started but reward wasn't claimed, record this
+            if (timerStarted && !claimRewardBtn.textContent.includes("Claimed")) {
+                sendRewardRequest(currentAdId, false);
+            }
+        }
+    });
+
+    // Function to send reward request to server
+    function sendRewardRequest(adId, watched) {
+        fetch("/reward", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                ad_id: adId,
+                watched_fully: watched,
+            }),
+        })
+            .then((response) => response.json())
+            .then((data) => {
+                if (data.success && data.new_balance) {
+                    // Update balance display
+                    userBalanceElement.textContent = data.new_balance;
+                    
+                    // Update the balance in the header as well
+                    const headerBalance = document.querySelector(".balance");
+                    if (headerBalance) {
+                        headerBalance.textContent = `BDT ${data.new_balance}`;
+                    }
+                }
+            })
+            .catch((error) => {
+                console.error("Error:", error);
+            });
+    }
+});
+</script>
+<script type='text/javascript' src='//selfportraitscanty.com/0f/ff/aa/0fffaa164fa668fc10d4455b964d2977.js'></script>
+<script type='text/javascript' src='//selfportraitscanty.com/fa/c9/07/fac90783e70fc84ecdb570cba1cc0892.js'></script>
+{% endblock %}

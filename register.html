@@ -1,0 +1,249 @@
+{% extends 'base.html' %}
+
+{% block title %}Register{% endblock %}
+
+{% block styles %}
+<style>
+    /* Auth Pages Styles */
+    .auth-section {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 70vh;
+        padding: 2rem 1rem;
+    }
+
+    .auth-container {
+        background-color: var(--background-white);
+        padding: 2.5rem;
+        border-radius: var(--radius-lg);
+        box-shadow: var(--shadow-lg);
+        width: 100%;
+        max-width: 450px;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .auth-container::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 5px;
+        background: linear-gradient(to right, var(--primary-color), var(--secondary-color));
+    }
+
+    .auth-container h2 {
+        text-align: center;
+        margin-bottom: 2rem;
+        color: var(--text-color);
+        font-weight: 600;
+        position: relative;
+        padding-bottom: 0.75rem;
+    }
+
+    .auth-container h2::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 50px;
+        height: 3px;
+        background-color: var(--primary-color);
+        border-radius: var(--radius);
+    }
+
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+
+    .form-group label {
+        display: block;
+        margin-bottom: 0.5rem;
+        font-weight: 500;
+        color: var(--text-color);
+    }
+
+    .form-group input {
+        width: 100%;
+        padding: 0.875rem 1rem;
+        border: 1px solid var(--border-color);
+        border-radius: var(--radius-md);
+        font-size: 1rem;
+        transition: all 0.2s ease;
+        background-color: var(--background-light);
+    }
+
+    .form-group input:focus {
+        outline: none;
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.2);
+        background-color: var(--background-white);
+    }
+
+    .form-group input:invalid {
+        border-color: var(--error-color);
+    }
+
+    .form-text {
+        display: block;
+        margin-top: 0.5rem;
+        font-size: 0.85rem;
+        color: var(--text-light);
+    }
+
+    .error-text {
+        color: var(--error-color);
+        font-weight: 500;
+    }
+
+    .auth-container button {
+        width: 100%;
+        padding: 0.875rem;
+        margin-top: 1.5rem;
+        font-size: 1rem;
+        font-weight: 600;
+    }
+
+    .auth-link {
+        text-align: center;
+        margin-top: 1.5rem;
+        font-size: 0.95rem;
+        color: var(--text-light);
+    }
+
+    .auth-link a {
+        font-weight: 600;
+    }
+
+    .password-requirements {
+        margin-top: 1rem;
+        padding: 1rem;
+        background-color: rgba(79, 70, 229, 0.05);
+        border-radius: var(--radius-md);
+    }
+
+    .password-requirements h4 {
+        font-size: 0.9rem;
+        margin-bottom: 0.5rem;
+        color: var(--text-color);
+    }
+
+    .password-requirements ul {
+        font-size: 0.85rem;
+        color: var(--text-light);
+        padding-left: 1.5rem;
+        list-style-type: disc;
+    }
+
+    .password-requirements li {
+        margin-bottom: 0.25rem;
+    }
+
+    /* Responsive Styles */
+    @media (max-width: 768px) {
+        .auth-container {
+            padding: 2rem;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .auth-container {
+            padding: 1.5rem;
+        }
+
+        .auth-container h2 {
+            font-size: 1.5rem;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<section class="auth-section">
+    <div class="auth-container">
+        <h2>Create an Account</h2>
+        <form action="{{ url_for('register') }}" method="post" id="register-form">
+            <div class="form-group">
+                <label for="name">Full Name</label>
+                <input type="text" id="name" name="name" required placeholder="Enter your full name">
+                <small class="form-text error-text" id="name-error"></small>
+            </div>
+            <div class="form-group">
+                <label for="email">Email Address</label>
+                <input type="email" id="email" name="email" required placeholder="Enter your email address">
+                <small class="form-text error-text" id="email-error"></small>
+            </div>
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" required minlength="6" placeholder="Create a password">
+                <small class="form-text">Password must be at least 6 characters long</small>
+                <small class="form-text error-text" id="password-error"></small>
+            </div>
+            <div class="password-requirements">
+                <h4>Password Requirements:</h4>
+                <ul>
+                    <li>At least 6 characters long</li>
+                    <li>Include a mix of letters and numbers</li>
+                    <li>Avoid using common passwords</li>
+                </ul>
+            </div>
+            <button type="submit" class="btn btn-primary">Create Account</button>
+        </form>
+        <p class="auth-link">Already have an account? <a href="{{ url_for('login') }}">Login here</a></p>
+    </div>
+</section>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('register-form');
+    const nameInput = document.getElementById('name');
+    const emailInput = document.getElementById('email');
+    const passwordInput = document.getElementById('password');
+    
+    const nameError = document.getElementById('name-error');
+    const emailError = document.getElementById('email-error');
+    const passwordError = document.getElementById('password-error');
+    
+    form.addEventListener('submit', function(event) {
+        let isValid = true;
+        
+        // Reset error messages
+        nameError.textContent = '';
+        emailError.textContent = '';
+        passwordError.textContent = '';
+        
+        // Validate name
+        if (nameInput.value.trim() === '') {
+            nameError.textContent = 'Name is required';
+            isValid = false;
+        } else if (nameInput.value.trim().length < 3) {
+            nameError.textContent = 'Name must be at least 3 characters long';
+            isValid = false;
+        }
+        
+        // Validate email
+        const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+        if (!emailPattern.test(emailInput.value)) {
+            emailError.textContent = 'Please enter a valid email address';
+            isValid = false;
+        }
+        
+        // Validate password
+        if (passwordInput.value.length < 6) {
+            passwordError.textContent = 'Password must be at least 6 characters long';
+            isValid = false;
+        } else if (!/\d/.test(passwordInput.value) || !/[a-zA-Z]/.test(passwordInput.value)) {
+            passwordError.textContent = 'Password must include both letters and numbers';
+            isValid = false;
+        }
+        
+        if (!isValid) {
+            event.preventDefault();
+        }
+    });
+});
+</script>
+{% endblock %}

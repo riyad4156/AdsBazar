@@ -1,0 +1,325 @@
+{% extends 'base.html' %}
+
+{% block title %}Welcome{% endblock %}
+
+{% block styles %}
+<style>
+    /* Welcome Page Styles */
+    .welcome-section {
+        display: flex;
+        flex-direction: column;
+        gap: 3rem;
+    }
+
+    .hero {
+        text-align: center;
+        padding: 4rem 1rem;
+        background: linear-gradient(135deg, rgba(79, 70, 229, 0.1) 0%, rgba(249, 115, 22, 0.1) 100%);
+        border-radius: var(--radius-xl);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .hero::before {
+        content: '';
+        position: absolute;
+        top: -50px;
+        right: -50px;
+        width: 200px;
+        height: 200px;
+        border-radius: 50%;
+        background: rgba(79, 70, 229, 0.1);
+        z-index: -1;
+    }
+
+    .hero::after {
+        content: '';
+        position: absolute;
+        bottom: -50px;
+        left: -50px;
+        width: 200px;
+        height: 200px;
+        border-radius: 50%;
+        background: rgba(249, 115, 22, 0.1);
+        z-index: -1;
+    }
+
+    .hero h1 {
+        font-size: 2.5rem;
+        margin-bottom: 1rem;
+        color: var(--text-color);
+        font-weight: 700;
+    }
+
+    .hero p {
+        font-size: 1.2rem;
+        margin-bottom: 2rem;
+        color: var(--text-light);
+        max-width: 600px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .cta-buttons {
+        display: flex;
+        justify-content: center;
+        gap: 1rem;
+    }
+
+    .section-title {
+        text-align: center;
+        margin-bottom: 2rem;
+        position: relative;
+        padding-bottom: 1rem;
+    }
+
+    .section-title::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 80px;
+        height: 4px;
+        background: linear-gradient(to right, var(--primary-color), var(--secondary-color));
+        border-radius: var(--radius);
+    }
+
+    .info-cards {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 2rem;
+    }
+
+    .card {
+        background-color: var(--background-white);
+        padding: 2rem;
+        border-radius: var(--radius-lg);
+        box-shadow: var(--shadow-md);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .card:hover {
+        transform: translateY(-5px);
+        box-shadow: var(--shadow-lg);
+    }
+
+    .card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 4px;
+        height: 100%;
+        background: linear-gradient(to bottom, var(--primary-color), var(--secondary-color));
+    }
+
+    .card h3 {
+        margin-bottom: 1rem;
+        color: var(--primary-color);
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+    }
+
+    .card h3 span {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 30px;
+        height: 30px;
+        background-color: var(--primary-color);
+        color: white;
+        border-radius: 50%;
+        margin-right: 0.75rem;
+        font-size: 0.9rem;
+    }
+
+    .announcements {
+        margin-top: 3rem;
+    }
+
+    .announcement {
+        background-color: var(--background-white);
+        padding: 1.5rem;
+        border-radius: var(--radius-lg);
+        box-shadow: var(--shadow);
+        margin-bottom: 1.5rem;
+        border-left: 4px solid var(--primary-color);
+        transition: transform 0.3s ease;
+    }
+
+    .announcement:hover {
+        transform: translateX(5px);
+    }
+
+    .announcement h3 {
+        margin-bottom: 0.75rem;
+        color: var(--text-color);
+        font-weight: 600;
+    }
+
+    .date {
+        display: block;
+        margin-top: 1rem;
+        color: var(--text-light);
+        font-size: 0.9rem;
+        font-style: italic;
+    }
+
+    .features-section {
+        margin-top: 3rem;
+        padding: 3rem 0;
+        background-color: var(--background-white);
+        border-radius: var(--radius-xl);
+        box-shadow: var(--shadow);
+    }
+
+    .features-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 2rem;
+        padding: 0 2rem;
+    }
+
+    .feature {
+        text-align: center;
+        padding: 1.5rem;
+    }
+
+    .feature-icon {
+        width: 60px;
+        height: 60px;
+        background-color: rgba(79, 70, 229, 0.1);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 1rem;
+        font-size: 1.5rem;
+        color: var(--primary-color);
+    }
+
+    .feature h3 {
+        margin-bottom: 0.75rem;
+        color: var(--text-color);
+    }
+
+    /* Responsive Styles */
+    @media (max-width: 768px) {
+        .hero h1 {
+            font-size: 2rem;
+        }
+
+        .hero p {
+            font-size: 1rem;
+        }
+
+        .cta-buttons {
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .cta-buttons .btn {
+            width: 100%;
+            max-width: 300px;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .hero {
+            padding: 3rem 1rem;
+        }
+
+        .hero h1 {
+            font-size: 1.8rem;
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+        }
+
+        .card, .announcement {
+            padding: 1.25rem;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<section class="welcome-section">
+    <div class="hero">
+        <h1>Welcome to AdsBazar</h1>
+        <p>Watch ads and earn BDT 3 for each fully watched advertisement! Join our platform today and start earning.</p>
+        
+        <div class="cta-buttons">
+            {% if 'user_id' not in session %}
+                <a href="{{ url_for('login') }}" class="btn btn-primary">Login</a>
+                <a href="{{ url_for('register') }}" class="btn btn-secondary">Create Account</a>
+            {% else %}
+                <a href="{{ url_for('dashboard') }}" class="btn btn-primary">Go to Dashboard</a>
+            {% endif %}
+        </div>
+    </div>
+    
+    <div class="info-section">
+        <h2 class="section-title">How It Works</h2>
+        <div class="info-cards">
+            <div class="card">
+                <h3><span>1</span>Create an Account</h3>
+                <p>Sign up with your email and password to get started. Our registration process is quick and secure.</p>
+            </div>
+            <div class="card">
+                <h3><span>2</span>Watch Ads</h3>
+                <p>Browse through our collection of advertisements and choose which ones to watch.</p>
+            </div>
+            <div class="card">
+                <h3><span>3</span>Earn Rewards</h3>
+                <p>Get BDT 3 for each ad you watch completely. Your balance updates instantly!</p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="features-section">
+        <h2 class="section-title">Why Choose AdsBazar</h2>
+        <div class="features-grid">
+            <div class="feature">
+                <div class="feature-icon">💰</div>
+                <h3>Instant Rewards</h3>
+                <p>Earn money immediately after watching ads, no waiting period.</p>
+            </div>
+            <div class="feature">
+                <div class="feature-icon">🔒</div>
+                <h3>Secure Platform</h3>
+                <p>Your data and earnings are protected with our secure system.</p>
+            </div>
+            <div class="feature">
+                <div class="feature-icon">📱</div>
+                <h3>Mobile Friendly</h3>
+                <p>Access AdsBazar from any device, anywhere, anytime.</p>
+            </div>
+            <div class="feature">
+                <div class="feature-icon">🎯</div>
+                <h3>Targeted Content</h3>
+                <p>Watch ads that match your interests and preferences.</p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="announcements">
+        <h2 class="section-title">Latest Announcements</h2>
+        <div class="announcement">
+            <h3>New Platform Launch</h3>
+            <p>We're excited to announce the launch of our new ad rewards platform! Get ready for a seamless experience and more earning opportunities.</p>
+            <span class="date">June 15, 2023</span>
+        </div>
+        <div class="announcement">
+            <h3>More Ads Coming Soon</h3>
+            <p>We're adding new advertisements every week. Stay tuned for more earning opportunities and exciting content from top brands!</p>
+            <span class="date">June 10, 2023</span>
+        </div>
+    </div>
+</section>
+{% endblock %}

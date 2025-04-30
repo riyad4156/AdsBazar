@@ -1,0 +1,445 @@
+{% extends 'base.html' %}
+
+{% block title %}Withdraw Funds{% endblock %}
+
+{% block styles %}
+<style>
+    /* Withdraw Page Styles */
+    .withdraw-section {
+        display: flex;
+        flex-direction: column;
+        gap: 2rem;
+    }
+
+    .withdraw-header {
+        background-color: var(--background-white);
+        padding: 2rem;
+        border-radius: var(--radius-lg);
+        box-shadow: var(--shadow);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 1.5rem;
+    }
+
+    .withdraw-title h2 {
+        font-size: 1.8rem;
+        margin-bottom: 0.5rem;
+        color: var(--text-color);
+    }
+
+    .withdraw-title p {
+        color: var(--text-light);
+    }
+
+    .balance-card {
+        background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
+        padding: 1.5rem 2rem;
+        border-radius: var(--radius-lg);
+        box-shadow: var(--shadow-md);
+        color: white;
+        min-width: 220px;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .balance-card::before {
+        content: '';
+        position: absolute;
+        top: -20px;
+        right: -20px;
+        width: 100px;
+        height: 100px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.1);
+    }
+
+    .balance-card h3 {
+        font-size: 1.1rem;
+        margin-bottom: 0.75rem;
+        font-weight: 500;
+    }
+
+    .balance-amount {
+        font-size: 2.2rem;
+        font-weight: 700;
+        display: flex;
+        align-items: center;
+    }
+
+    .balance-amount span {
+        font-size: 1.2rem;
+        margin-right: 0.5rem;
+        opacity: 0.8;
+    }
+
+    .withdraw-form-container {
+        background-color: var(--background-white);
+        padding: 2rem;
+        border-radius: var(--radius-lg);
+        box-shadow: var(--shadow);
+    }
+
+    .withdraw-form-container h3 {
+        font-size: 1.5rem;
+        margin-bottom: 1.5rem;
+        color: var(--text-color);
+        position: relative;
+        padding-bottom: 0.75rem;
+    }
+
+    .withdraw-form-container h3::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 50px;
+        height: 3px;
+        background-color: var(--primary-color);
+        border-radius: var(--radius);
+    }
+
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+
+    .form-group label {
+        display: block;
+        margin-bottom: 0.5rem;
+        font-weight: 500;
+        color: var(--text-color);
+    }
+
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+        width: 100%;
+        padding: 0.875rem 1rem;
+        border: 1px solid var(--border-color);
+        border-radius: var(--radius-md);
+        font-size: 1rem;
+        transition: all 0.2s ease;
+        background-color: var(--background-light);
+    }
+
+    .form-group input:focus,
+    .form-group select:focus,
+    .form-group textarea:focus {
+        outline: none;
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.2);
+        background-color: var(--background-white);
+    }
+
+    .form-text {
+        display: block;
+        margin-top: 0.5rem;
+        font-size: 0.85rem;
+        color: var(--text-light);
+    }
+
+    .error-text {
+        color: var(--error-color);
+        font-weight: 500;
+    }
+
+    .withdraw-requirements {
+        margin-top: 1rem;
+        padding: 1rem;
+        background-color: rgba(79, 70, 229, 0.05);
+        border-radius: var(--radius-md);
+    }
+
+    .withdraw-requirements h4 {
+        font-size: 0.9rem;
+        margin-bottom: 0.5rem;
+        color: var(--text-color);
+    }
+
+    .withdraw-requirements ul {
+        font-size: 0.85rem;
+        color: var(--text-light);
+        padding-left: 1.5rem;
+        list-style-type: disc;
+    }
+
+    .withdraw-requirements li {
+        margin-bottom: 0.25rem;
+    }
+
+    .withdraw-history {
+        background-color: var(--background-white);
+        padding: 2rem;
+        border-radius: var(--radius-lg);
+        box-shadow: var(--shadow);
+        margin-top: 2rem;
+    }
+
+    .withdraw-history h3 {
+        font-size: 1.5rem;
+        margin-bottom: 1.5rem;
+        color: var(--text-color);
+        position: relative;
+        padding-bottom: 0.75rem;
+    }
+
+    .withdraw-history h3::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 50px;
+        height: 3px;
+        background-color: var(--primary-color);
+        border-radius: var(--radius);
+    }
+
+    .history-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    .history-table th,
+    .history-table td {
+        padding: 1rem;
+        text-align: left;
+        border-bottom: 1px solid var(--border-color);
+    }
+
+    .history-table th {
+        font-weight: 600;
+        color: var(--text-color);
+        background-color: var(--background-light);
+    }
+
+    .history-table tr:last-child td {
+        border-bottom: none;
+    }
+
+    .status-badge {
+        display: inline-block;
+        padding: 0.25rem 0.75rem;
+        border-radius: var(--radius);
+        font-size: 0.85rem;
+        font-weight: 500;
+    }
+
+    .status-pending {
+        background-color: rgba(245, 158, 11, 0.1);
+        color: var(--warning-color);
+    }
+
+    .status-completed {
+        background-color: rgba(16, 185, 129, 0.1);
+        color: var(--success-color);
+    }
+
+    .status-rejected {
+        background-color: rgba(239, 68, 68, 0.1);
+        color: var(--error-color);
+    }
+
+    .empty-history {
+        text-align: center;
+        padding: 2rem;
+        color: var(--text-light);
+    }
+
+    /* Responsive Styles */
+    @media (max-width: 768px) {
+        .withdraw-header {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .balance-card {
+            width: 100%;
+        }
+
+        .history-table {
+            display: block;
+            overflow-x: auto;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .withdraw-header, .withdraw-form-container, .withdraw-history {
+            padding: 1.5rem;
+        }
+
+        .withdraw-title h2 {
+            font-size: 1.5rem;
+        }
+
+        .balance-amount {
+            font-size: 1.8rem;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<section class="withdraw-section">
+    <div class="withdraw-header">
+        <div class="withdraw-title">
+            <h2>Withdraw Funds</h2>
+            <p>Request a withdrawal of your earned money</p>
+        </div>
+        <div class="balance-card">
+            <h3>Available Balance</h3>
+            <p class="balance-amount"><span>BDT</span>{{ balance }}</p>
+        </div>
+    </div>
+    
+    <div class="withdraw-form-container">
+        <h3>Request Withdrawal</h3>
+        
+        {% if balance < 300 %}
+            <div class="flash-message warning">
+                You need at least BDT 300 to request a withdrawal.
+            </div>
+        {% else %}
+            <form action="{{ url_for('withdraw') }}" method="post" id="withdraw-form">
+                <div class="form-group">
+                    <label for="amount">Withdrawal Amount (BDT)</label>
+                    <input type="number" id="amount" name="amount" min="300" max="1000" step="1" required value="300">
+                    <small class="form-text">Minimum: BDT 300, Maximum: BDT 1000</small>
+                    <small class="form-text error-text" id="amount-error"></small>
+                </div>
+                
+                <div class="form-group">
+                    <label for="payment_method">Payment Method</label>
+                    <select id="payment_method" name="payment_method" required>
+                        <option value="">Select payment method</option>
+                        <option value="bKash">bKash</option>
+                        <option value="Nagad">Nagad</option>
+                        <option value="Rocket">Rocket</option>
+                        <option value="Bank Transfer">Bank Transfer</option>
+                    </select>
+                    <small class="form-text error-text" id="payment-method-error"></small>
+                </div>
+                
+                <div class="form-group">
+                    <label for="payment_details">Payment Details</label>
+                    <textarea id="payment_details" name="payment_details" rows="3" required placeholder="Enter your payment details (e.g., mobile number, account number)"></textarea>
+                    <small class="form-text">Please provide accurate payment details to ensure successful transfer.</small>
+                    <small class="form-text error-text" id="payment-details-error"></small>
+                </div>
+                
+                <div class="withdraw-requirements">
+                    <h4>Withdrawal Requirements:</h4>
+                    <ul>
+                        <li>Minimum withdrawal amount: BDT 300</li>
+                        <li>Maximum withdrawal amount: BDT 1000</li>
+                        <li>You can only have one pending withdrawal at a time</li>
+                        <li>Withdrawals are typically processed within 24-48 hours</li>
+                    </ul>
+                </div>
+                
+                <button type="submit" class="btn btn-primary">Request Withdrawal</button>
+            </form>
+        {% endif %}
+    </div>
+    
+    <div class="withdraw-history">
+        <h3>Withdrawal History</h3>
+        
+        {% if withdrawal_history and withdrawal_history|length > 0 %}
+            <div class="table-responsive">
+                <table class="history-table">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Amount</th>
+                            <th>Payment Method</th>
+                            <th>Status</th>
+                            <th>Notes</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for withdrawal in withdrawal_history %}
+                            <tr>
+                                <td>{{ withdrawal.request_date }}</td>
+                                <td>BDT {{ withdrawal.amount }}</td>
+                                <td>{{ withdrawal.payment_method }}</td>
+                                <td>
+                                    {% if withdrawal.status == 'pending' %}
+                                        <span class="status-badge status-pending">Pending</span>
+                                    {% elif withdrawal.status == 'completed' %}
+                                        <span class="status-badge status-completed">Completed</span>
+                                    {% elif withdrawal.status == 'rejected' %}
+                                        <span class="status-badge status-rejected">Rejected</span>
+                                    {% endif %}
+                                </td>
+                                <td>{{ withdrawal.admin_note or '-' }}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <div class="empty-history">
+                <p>You haven't made any withdrawal requests yet.</p>
+            </div>
+        {% endif %}
+    </div>
+</section>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('withdraw-form');
+    
+    if (form) {
+        const amountInput = document.getElementById('amount');
+        const paymentMethodSelect = document.getElementById('payment_method');
+        const paymentDetailsInput = document.getElementById('payment_details');
+        
+        const amountError = document.getElementById('amount-error');
+        const paymentMethodError = document.getElementById('payment-method-error');
+        const paymentDetailsError = document.getElementById('payment-details-error');
+        
+        form.addEventListener('submit', function(event) {
+            let isValid = true;
+            
+            // Reset error messages
+            amountError.textContent = '';
+            paymentMethodError.textContent = '';
+            paymentDetailsError.textContent = '';
+            
+            // Validate amount
+            const amount = parseFloat(amountInput.value);
+            if (isNaN(amount) || amount < 300) {
+                amountError.textContent = 'Minimum withdrawal amount is BDT 300';
+                isValid = false;
+            } else if (amount > 1000) {
+                amountError.textContent = 'Maximum withdrawal amount is BDT 1000';
+                isValid = false;
+            } else if (amount > {{ balance }}) {
+                amountError.textContent = 'Amount exceeds your available balance';
+                isValid = false;
+            }
+            
+            // Validate payment method
+            if (!paymentMethodSelect.value) {
+                paymentMethodError.textContent = 'Please select a payment method';
+                isValid = false;
+            }
+            
+            // Validate payment details
+            if (!paymentDetailsInput.value.trim()) {
+                paymentDetailsError.textContent = 'Payment details are required';
+                isValid = false;
+            } else if (paymentDetailsInput.value.trim().length < 5) {
+                paymentDetailsError.textContent = 'Please provide more detailed payment information';
+                isValid = false;
+            }
+            
+            if (!isValid) {
+                event.preventDefault();
+            }
+        });
+    }
+});
+</script>
+{% endblock %}
